@@ -1,0 +1,18 @@
+server:
+  port: 8022
+  servlet:
+    context-path: '/api'
+
+spring:
+  data:
+    mongodb:
+      host: 172.16.2.3
+      port: 27017
+      database: blackjack
+      username: jack
+      password: VBbjP3YnfvosKb_YsyMjbfxPAHMo6x7A
+
+logging:
+  level:
+    com.dannio.blackjack: debug
+
