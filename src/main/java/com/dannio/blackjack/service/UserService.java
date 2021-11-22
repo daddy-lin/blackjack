@@ -26,23 +26,24 @@ public class UserService {
     @SneakyThrows
     public User login(UserLoginParam loginParam) {
 
+        UserApiParam userApiParam = UserApiParam.builder()
+                .nameOrEmail(loginParam.getUsername())
+                .userPassword(loginParam.getPassword())
+                .build();
+        ApiKey apiKey = RetrofitClient.executeKey(apiService.getKey(userApiParam));
+
+        ApiUser apiUser = RetrofitClient.execute(apiService.getUser(apiKey.getKey()));
+
         User user = repository.findByUsername(loginParam.getUsername());
         if (user == null) {
-            UserApiParam userApiParam = UserApiParam.builder()
-                    .nameOrEmail(loginParam.getUsername())
-                    .userPassword(loginParam.getPassword())
-                    .build();
-            ApiKey apiKey = RetrofitClient.executeKey(apiService.getKey(userApiParam));
-
-            ApiUser apiUser = RetrofitClient.execute(apiService.getUser(apiKey.getKey()));
-
-            User registered = User.builder()
+            user = User.builder()
                     .username(apiUser.getUserName())
                     .apiKey(apiKey.getKey())
                     .build();
-            user = repository.save(registered);
+        } else {
+            user.setApiKey(apiKey.getKey());
         }
-        return user;
+        return repository.save(user);
     }
 
 
